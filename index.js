@@ -6,6 +6,7 @@ var config = {};
 
 exports.register = function(plugin, options, next){
     config = options;
+    plugin.log(["debug", "service-status"], "registering service-status routes");
     plugin.route([
             {
                 method: "GET",

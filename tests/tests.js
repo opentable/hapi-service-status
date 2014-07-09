@@ -28,7 +28,8 @@ describe('service-status tests', function(){
                   if(Array.isArray(route)){
                       route.forEach(function(ro){ r.push(ro); });
                   } else { r.push(route); }
-              }
+              },
+              log: function(){}
             };
 
         p.register(plugin, {}, function(){});

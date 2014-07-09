@@ -49,3 +49,5 @@ Routes:
 Future plans:
 
 - Support for server packs
+- Maybe Ok/Warn/Fail threshold?
+- Optionally fail on a 404

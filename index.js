@@ -12,7 +12,7 @@ exports.register = function(plugin, options, next){
                 path: "/service-status",
                 config: {
                     handler: function(request, reply) {
-                        service.timeRequest(plugin.servers[0], config.default, function(result){
+                        service.timeRequest(plugin.servers[0], config.monitors[config.default], function(result){
                             reply([result]);
                         });
                     }

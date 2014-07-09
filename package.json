@@ -1,0 +1,35 @@
+{
+  "name": "hapi-service-status",
+  "version": "0.1.0",
+  "description": "service-status plugin for hapi",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:opentable/hapi-service-status.git"
+  },
+  "keywords": [
+    "hapi",
+    "hapiplugin"
+  ],
+  "author": "Andy Royle <ajroyle@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/opentable/hapi-service-status/issues"
+  },
+  "homepage": "https://github.com/opentable/hapi-service-status",
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-mocha-test": "^0.10.2",
+    "should": "^3.3.1"
+  },
+  "dependencies": {
+    "async": "^0.9.0",
+    "underscore": "^1.6.0"
+  }
+}

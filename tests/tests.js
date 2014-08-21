@@ -13,6 +13,12 @@ describe('service-status tests', function(){
             },
             log: function(){}
         },
+        notfoundserver = {
+            inject: function(options, callback){
+                callback({ statusCode: 404 });
+            },
+            log: function(){}
+        },
         slowserver = {
             inject: function(options, callback){
                 setTimeout(function(){ callback({ statusCode: 200 });}, 10);
@@ -240,8 +246,8 @@ describe('service-status tests', function(){
               });
       });
 
-      it('should have status "Failed" when the response code is not 2xx or 4xx', function(done){
-          service.run(badserver,
+      it('should have status "Failed" when the response code is not 200', function(done){
+          service.run(notfoundserver,
               {
                   path: "/my/route/to/test",
                   headers: {},

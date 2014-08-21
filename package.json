@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "async": "^0.9.0",
+    "joi": "^4.6.2",
     "underscore": "^1.6.0"
   }
 }

@@ -18,6 +18,21 @@ describe('service-status tests', function(){
                 setTimeout(function(){ callback({ statusCode: 200 });}, 10);
             },
             log: function(){}
+        },
+        options = {
+          monitors: [{
+            monitorname: "MyMonitor1",
+            path: "/path/to/test",
+            headers: { "accept-language": "en-US"},
+            timeout: 500
+          },
+          {
+            monitorname: "MyMonitor2",
+            path: "/path/to/test",
+            headers: { "accept-language": "en-US"},
+            compare: function(){}
+          }],
+          default: 0
         };
 
     it('should register the routes', function(){
@@ -32,11 +47,86 @@ describe('service-status tests', function(){
               log: function(){}
             };
 
-        p.register(plugin, {}, function(){});
+        p.register(plugin, options, function(){});
         r.length.should.eql(3);
         r[0].path.should.eql('/service-status');
         r[1].path.should.eql('/service-status/all');
         r[2].path.should.eql('/service-status/{monitorname}');
+    });
+
+    describe('validation', function(){
+      var schema = require('../lib/schema'),
+          joi = require('joi')
+
+      it('should not allow missing monitorname', function(done){
+        joi.validate({
+          monitors: [{
+            path: "/path/to/test",
+            headers: { "accept-language": "en-US"},
+            timeout: 500
+          }]
+        }, schema, function(err, value){
+          done(!err ? new Error("allowed an empty monitorname") : undefined);
+        });
+      });
+
+      it('should not allow missing path', function(done){
+        joi.validate({
+          monitors: [{
+            monitorname: "MyMonitor",
+            headers: { "accept-language": "en-US"},
+            timeout: 500
+          }]
+        }, schema, function(err, value){
+          done(!err ? new Error("allowed an empty path") : undefined);
+        });
+      });
+
+      it('should not allow timeout and compare together', function(done){
+        joi.validate({
+          monitors: [{
+            monitorname: "MyMonitor",
+            path: "/path/to/test",
+            headers: { "accept-language": "en-US"},
+            timeout: 500,
+            compare: function(){}
+          }]
+        }, schema, function(err, value){
+          done(!err ? new Error("allowed timeout and compare together") : undefined);
+        });
+      });
+
+      it('should not allow missing timeout and compare', function(done){
+        joi.validate({
+          monitors: [{
+            monitorname: "MyMonitor",
+            path: "/path/to/test",
+            headers: { "accept-language": "en-US"}
+          }]
+        }, schema, function(err, value){
+          done(!err ? new Error("allowed timeout and compare together") : undefined);
+        });
+      });
+
+      it('should allow missing headers', function(done){
+        joi.validate({
+          monitors: [{
+            monitorname: "MyMonitor",
+            path: "/path/to/test",
+            timeout: 500,
+          }]
+        }, schema, function(err, value){
+          done(err);
+        });
+      });
+
+      it('should not allow empty monitor array', function(done){
+        joi.validate({
+          monitors: []
+        }, schema, function(err, value){
+          done(!err ? new Error("allowed empty monitor array") : undefined);
+        });
+      });
     });
 
     describe('timed', function(){

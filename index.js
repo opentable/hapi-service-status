@@ -1,19 +1,25 @@
 var service = require('./lib/service'),
     async = require('async'),
+    joi = require("joi"),
+    schema = require("./lib/schema"),
     _ = require('underscore');
 
 var config = {};
 
 exports.register = function(plugin, options, next){
     config = options;
-    plugin.log(["debug", "service-status"], "registering service-status routes");
+
+    plugin.log(["service-status"], "validating monitors");
+    joi.validate(options, schema);
+
+    plugin.log(["service-status"], "registering service-status routes");
     plugin.route([
             {
                 method: "GET",
                 path: "/service-status",
                 config: {
                     handler: function(request, reply) {
-                        service.run(request.server, config.monitors[config.default], function(result){
+                        service.run(request.server, config.monitors[config.default || 0], function(result){
                             reply([result]);
                         });
                     }

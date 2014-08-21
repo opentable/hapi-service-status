@@ -1,34 +1,42 @@
 #Hapi service-status
 [![Build Status](https://travis-ci.org/opentable/hapi-service-status.png?branch=master)](https://travis-ci.org/opentable/hapi-service-status) [![NPM version](https://badge.fury.io/js/hapi-service-status.png)](http://badge.fury.io/js/hapi-service-status) ![Dependencies](https://david-dm.org/opentable/hapi-service-status.png)
 
-Shared code for the `service-status` endpoint. 
+Shared code for the `service-status` endpoint.
 
 Performs a check by injecting a request to a specified endpoint (using server.inject).
 
 Installation:
 
-```npm install hapi-service-status```
+```npm install --save hapi-service-status```
 
 Usage:
 
 ```
 var server = hapi.createServer();
 
-server.pack.require("hapi-service-status",
+server.pack.register(
   {
-    monitors: [
-        { 
-            path: '/my/route/to/test/123', 
-            headers: {}, 
+      plugin: require("hapi-service-status"),
+      options: {
+        monitors: [
+          {
+            monitorname: 'mymonitor1',
+            path: '/my/route/to/test/123',
+            headers: {},
             timeout: 500 // if the request takes longer than this time (ms) then report as 'Failed'
-        },
-        { 
-            path: '/my/other/route/321', 
-            headers: {}, 
-            timeout: 500
-        }
-    ],
-    default: 0 // index of the default monitor
+          },
+          {
+            monitorname: 'mymonitor2',
+            path: '/my/other/route/321',
+            headers: {},
+            compare: function(body){     // this function should return true or false based on body content
+              return body.foo == "bar";  // returning false will result in a 'Failed' status
+            }
+          }
+          // ...
+        ]
+        default: 6
+      }
   },
   function (err){
     if(err){
@@ -48,6 +56,5 @@ Routes:
 
 Future plans:
 
-- Support for server packs
 - Maybe Ok/Warn/Fail threshold?
 - Optionally fail on a 404

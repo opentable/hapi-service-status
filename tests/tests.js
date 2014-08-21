@@ -3,7 +3,7 @@ describe('service-status tests', function(){
         service = require('../lib/service'),
         server = {
             inject: function(options, callback){
-                callback({ statusCode: 200 });
+                callback({ statusCode: 200, body: { foo: "bar" } });
             },
             log: function(){}
         },
@@ -39,70 +39,158 @@ describe('service-status tests', function(){
         r[2].path.should.eql('/service-status/{monitorname}');
     });
 
-    it('should inject the request', function(done){
-        service.timeRequest(server,
-            {
-                path: "/my/route/to/test",
-                headers: {},
-                timeout: 500,
-                monitorname: "MyMonitor"
-            },
-            function(result){
-                result.response.should.eql(200);
-                done();
-            }
-        );
+    describe('timed', function(){
+      it('should inject the request', function(done){
+          service.run(server,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  timeout: 500,
+                  monitorname: "MyMonitor"
+              },
+              function(result){
+                  result.response.should.eql(200);
+                  done();
+              }
+          );
+      });
+
+      it('should include the response code', function(done){
+          service.run(server,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  timeout: 500,
+                  monitorname: "MyMonitor"
+              }, function(result){
+                  result.response.should.eql(200);
+                  done();
+              });
+      });
+
+      it('should have status "Ok" when the response code is 200', function(done){
+          service.run(server,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  timeout: 500,
+                  monitorname: "MyMonitor"
+              }, function(result){
+                  result.status.should.eql("Ok");
+                  done();
+              });
+      });
+
+      it('should have status "Failed" when the response code is not 2xx or 4xx', function(done){
+          service.run(badserver,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  timeout: 500,
+                  monitorname: "MyMonitor"
+              }, function(result){
+                  result.status.should.eql("Failed");
+                  done();
+              });
+      });
+
+      it('should have status "Failed" when the response time is above the threshold', function(done){
+          service.run(slowserver,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  timeout: 5,
+                  monitorname: "MyMonitor"
+              }, function(result){
+                  result.status.should.eql("Failed");
+                  done();
+              });
+      });
     });
 
-    it('should include the response code', function(done){
-        service.timeRequest(badserver,
-            {
-                path: "/my/route/to/test",
-                headers: {},
-                timeout: 500,
-                monitorname: "MyMonitor"
-            }, function(result){
-                result.response.should.eql(500);
-                done();
-            });
-    });
+    describe('compare', function(){
+      it('should inject the request', function(done){
+          service.run(server,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  monitorname: "MyMonitor",
+                  compare: function(){ return true; }
+              },
+              function(result){
+                  result.response.should.eql(200);
+                  done();
+              }
+          );
+      });
 
-    it('should have status "Ok" when the response code is 200', function(done){
-        service.timeRequest(server,
-            {
-                path: "/my/route/to/test",
-                headers: {},
-                timeout: 500,
-                monitorname: "MyMonitor"
-            }, function(result){
-                result.status.should.eql("Ok");
-                done();
-            });
-    });
+      it('should include the response code', function(done){
+          service.run(server,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  monitorname: "MyMonitor",
+                  compare: function(){ return true; }
+              }, function(result){
+                  result.response.should.eql(200);
+                  done();
+              });
+      });
 
-    it('should have status "Failed" when the response code is not 2xx or 4xx', function(done){
-        service.timeRequest(badserver,
-            {
-                path: "/my/route/to/test",
-                headers: {},
-                timeout: 500,
-                monitorname: "MyMonitor"
-            }, function(result){
-                result.status.should.eql("Failed");
-                done();
-            });
-    });
+      it('should have status "Ok" when the response code is 200', function(done){
+          service.run(server,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  monitorname: "MyMonitor",
+                  compare: function(){ return true; }
+              }, function(result){
+                  result.status.should.eql("Ok");
+                  done();
+              });
+      });
 
-    it('should have status "Failed" when the response time is above the threshold', function(done){
-        service.timeRequest(slowserver,
-            {
-                path: "/my/route/to/test",
-                headers: {},
-                timeout: 5,
-                monitorname: "MyMonitor"
-            }, function(result){
-                result.status.should.eql("Failed");
-                done();
-            });
+      it('should have status "Failed" when the response code is not 2xx or 4xx', function(done){
+          service.run(badserver,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  monitorname: "MyMonitor",
+                  compare: function(){ return true; }
+              }, function(result){
+                  result.status.should.eql("Failed");
+                  done();
+              });
+      });
+
+      it('should have status "Ok" when the value matches', function(done){
+          service.run(server,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  monitorname: "MyMonitor",
+                  compare: function(body){
+                    return body.foo === "bar";
+                  }
+              }, function(result){
+                  result.status.should.eql("Ok");
+                  done();
+              });
+      });
+
+      it('should have status "Failed" when the value doesn\'t matche', function(done){
+          service.run(server,
+              {
+                  path: "/my/route/to/test",
+                  headers: {},
+                  monitorname: "MyMonitor",
+                  compare: function(body){
+                    return body.foo === "foobar";
+                  }
+              }, function(result){
+                  result.status.should.eql("Failed");
+                  done();
+              });
+      });
     });
 });

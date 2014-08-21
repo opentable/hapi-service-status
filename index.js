@@ -13,7 +13,7 @@ exports.register = function(plugin, options, next){
                 path: "/service-status",
                 config: {
                     handler: function(request, reply) {
-                        service.timeRequest(request.server, config.monitors[config.default], function(result){
+                        service.run(request.server, config.monitors[config.default], function(result){
                             reply([result]);
                         });
                     }
@@ -27,7 +27,7 @@ exports.register = function(plugin, options, next){
                         var results = [];
 
                         var sendRequest = function(item, done){
-                            service.timeRequest(request.server, item, function(result){
+                            service.run(request.server, item, function(result){
                                 results.push(result);
                                 done();
                             });
@@ -52,7 +52,7 @@ exports.register = function(plugin, options, next){
                             return;
                         }
 
-                        service.timeRequest(request.server, monitor, function(result){
+                        service.run(request.server, monitor, function(result){
                             reply(result).code(200);
                         });
                     }

@@ -3,13 +3,19 @@ describe('service-status tests', function(){
         service = require('../lib/service'),
         server = {
             inject: function(options, callback){
-                callback({ statusCode: 200, body: { foo: "bar" } });
+                callback({ statusCode: 200, payload: '{ "foo": "bar" }' });
             },
             log: function(){}
         },
         badserver = {
             inject: function(options, callback){
                 callback({ statusCode: 500 });
+            },
+            log: function(){}
+        },
+        notfoundserver = {
+            inject: function(options, callback){
+                callback({ statusCode: 404 });
             },
             log: function(){}
         },
@@ -240,8 +246,8 @@ describe('service-status tests', function(){
               });
       });
 
-      it('should have status "Failed" when the response code is not 2xx or 4xx', function(done){
-          service.run(badserver,
+      it('should have status "Failed" when the response code is not 200', function(done){
+          service.run(notfoundserver,
               {
                   path: "/my/route/to/test",
                   headers: {},

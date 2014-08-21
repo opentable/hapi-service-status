@@ -3,7 +3,7 @@ describe('service-status tests', function(){
         service = require('../lib/service'),
         server = {
             inject: function(options, callback){
-                callback({ statusCode: 200, body: { foo: "bar" } });
+                callback({ statusCode: 200, payload: '{ "foo": "bar" }' });
             },
             log: function(){}
         },

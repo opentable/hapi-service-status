@@ -17,7 +17,7 @@ var validateOptions = function(){
 
 exports.register = function(plugin, options, next){
     plugin.log(["service-status"], "validating monitors");
-    config = validateOptions(option);
+    config = validateOptions(options);
 
     plugin.log(["service-status"], "registering service-status routes");
     plugin.route([

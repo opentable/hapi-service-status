@@ -6,7 +6,7 @@ var service = require('./lib/service'),
 
 var config = {};
 
-var validateOptions = function(){
+var validateOptions = function(options){
   var result = joi.validate(options, schema);
   if(result.error){
     throw result.error;

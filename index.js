@@ -6,11 +6,18 @@ var service = require('./lib/service'),
 
 var config = {};
 
-exports.register = function(plugin, options, next){
-    config = options;
+var validateOptions = function(){
+  var result = joi.validate(options, schema);
+  if(result.error){
+    throw result.error;
+  }
 
+  return result.value;
+};
+
+exports.register = function(plugin, options, next){
     plugin.log(["service-status"], "validating monitors");
-    joi.validate(options, schema);
+    config = validateOptions(option);
 
     plugin.log(["service-status"], "registering service-status routes");
     plugin.route([
@@ -65,6 +72,10 @@ exports.register = function(plugin, options, next){
                 }
             }
     ]);
+
+    plugin.expose('selfTest', function(server, cb){
+      service.selfTest(server, config.monitors, cb);
+    });
 
     next();
 };

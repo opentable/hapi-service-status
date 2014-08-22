@@ -50,7 +50,8 @@ describe('service-status tests', function(){
                       route.forEach(function(ro){ r.push(ro); });
                   } else { r.push(route); }
               },
-              log: function(){}
+              log: function(){},
+              expose: function(){}
             };
 
         p.register(plugin, options, function(){});
@@ -287,6 +288,61 @@ describe('service-status tests', function(){
                   result.status.should.eql("Failed");
                   done();
               });
+      });
+    });
+
+    describe('selfTest', function(){
+      it('should exclude monitors where selfTest = false', function(done){
+        var wasCalled = false;
+        var server = {
+          inject: function(options, callback){
+            wasCalled = true;
+            callback();
+          },
+          log: function(){}
+        };
+
+        service.selfTest(server, [{ selfTest: false }], function(){
+          wasCalled.should.eql(false);
+          done();
+        });
+      });
+
+      it('should invoke monitors where selfTest = true', function(done){
+        var wasCalled = false;
+        var server = {
+          inject: function(options, callback){
+            wasCalled = true;
+            callback({ statusCode: 200, payload: '{}' });
+          },
+          log: function(){}
+        };
+
+        service.selfTest(
+          server,
+          [{ selfTest: true, compare: function(){ return true; } }],
+          function(){
+            wasCalled.should.eql(true);
+            done();
+          }
+        );
+      });
+
+      it('should return an error if a monitor fails', function(done){
+        var server = {
+          inject: function(options, callback){
+            callback({ statusCode: 200, payload: '{}' });
+          },
+          log: function(){}
+        };
+
+        service.selfTest(
+          server,
+          [{ selfTest: true, compare: function(){ return false; } }],
+          function(err){
+            done(!err ? new Error("didn't return an error on failing monitor") : undefined);
+          }
+        );
       });
     });
 });

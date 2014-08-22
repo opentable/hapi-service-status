@@ -32,10 +32,17 @@ server.pack.register(
             compare: function(body){     // this function should return true or false based on body content
               return body.foo == "bar";  // returning false will result in a 'Failed' status
             }
+          },
+          {
+            monitorname: 'mymonitor3',
+            path: '/my/other/other/route',
+            headers: {},
+            timeout: 500,
+            selfTest: false // exclude this monitor from the selfTest() function
           }
           // ...
         ]
-        default: 6
+        default: 1
       }
   },
   function (err){
@@ -52,6 +59,22 @@ Routes:
 - `/service-status`                // runs the default monitor
 - `/service-status/{monitorname}`  // runs the named monitor
 - `/service-status/all`            // runs all monitors, use with caution
+
+
+SelfTest:
+
+Provides a method to run all the monitors and assert they are successful. Useful for a startup-self test.
+
+```
+
+server.start(function(){
+  server.plugins['hapi-service-status'].selfTest(function(err){
+      if(err){
+        throw err;
+      }
+    });
+});
+```
 
 
 Future plans:

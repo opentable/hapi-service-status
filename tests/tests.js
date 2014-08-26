@@ -344,5 +344,19 @@ describe('service-status tests', function(){
           }
         );
       });
+
+      it('should record a successful self-test', function(done){
+        var server = {
+          inject: function(options, callback){
+            callback({ statusCode: 200, payload: '{}' });
+          },
+          log: function(){}
+        };
+
+        service.selfTest(server, [{ selfTest: true, compare: function(){ return true; } }], function(){
+          service.selfTestPassed().should.eql(true);
+          done();
+        });
+      });
     });
 });

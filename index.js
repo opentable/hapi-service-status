@@ -70,8 +70,21 @@ exports.register = function(plugin, options, next){
                         });
                     }
                 }
+            },
+            {
+                method: "GET",
+                path: "/service-status/self-test-result",
+                config: {
+                    handler: function(request, reply) {
+                        reply({
+                          monitorname: "self-test-result",
+                          result: service.selfTestResult() ? "Ok" : "Failed",
+                        });
+                    }
+                }
             }
-    ]);
+        ]
+    );
 
     plugin.expose('selfTest', function(server, cb){
       service.selfTest(server, config.monitors, cb);

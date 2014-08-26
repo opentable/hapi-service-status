@@ -55,10 +55,11 @@ describe('service-status tests', function(){
             };
 
         p.register(plugin, options, function(){});
-        r.length.should.eql(3);
+        r.length.should.eql(4);
         r[0].path.should.eql('/service-status');
         r[1].path.should.eql('/service-status/all');
         r[2].path.should.eql('/service-status/{monitorname}');
+        r[3].path.should.eql('/service-status/self-test-result');
     });
 
     describe('validation', function(){

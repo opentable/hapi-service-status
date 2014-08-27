@@ -78,7 +78,7 @@ exports.register = function(plugin, options, next){
                     handler: function(request, reply) {
                         reply({
                           monitorname: "self-test-result",
-                          result: service.selfTestResult() ? "Ok" : "Failed",
+                          result: service.selfTestPassed() ? "Ok" : "Failed",
                         });
                     }
                 }

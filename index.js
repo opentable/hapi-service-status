@@ -29,7 +29,9 @@ exports.register = function(plugin, options, next){
                         service.run(request.server, config.monitors[config.default || 0], function(result){
                             reply([result]);
                         });
-                    }
+                    },
+                    tags: ['service-status', 'non-cacheable'],
+                    description: 'run the default monitor'
                 }
             },
             {
@@ -49,7 +51,9 @@ exports.register = function(plugin, options, next){
                         async.forEach(config.monitors, sendRequest, function(){
                             reply(results);
                         });
-                    }
+                    },
+                    tags: ['service-status', 'non-cacheable'],
+                    description: 'run all monitors'
                 }
             },
             {
@@ -68,7 +72,9 @@ exports.register = function(plugin, options, next){
                         service.run(request.server, monitor, function(result){
                             reply(result).code(200);
                         });
-                    }
+                    },
+                    tags: ['service-status', 'non-cacheable'],
+                    description: 'run a monitor by name'
                 }
             },
             {
@@ -80,7 +86,9 @@ exports.register = function(plugin, options, next){
                           monitorname: "self-test-result",
                           result: service.selfTestPassed() ? "Ok" : "Failed",
                         });
-                    }
+                    },
+                    tags: ['service-status', 'non-cacheable'],
+                    description: 'get the self-test result (self test runs at startup if enabled)'
                 }
             }
         ]

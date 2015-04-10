@@ -1,6 +1,6 @@
 {
   "name": "hapi-service-status",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "service-status plugin for hapi",
   "main": "index.js",
   "scripts": {

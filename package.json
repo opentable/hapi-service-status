@@ -21,16 +21,16 @@
   },
   "homepage": "https://github.com/opentable/hapi-service-status",
   "devDependencies": {
-    "grunt": "^0.4.4",
+    "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
-    "grunt-contrib-clean": "^0.5.0",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-mocha-test": "^0.10.2",
-    "should": "^3.3.1"
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-jshint": "^0.11.1",
+    "grunt-mocha-test": "^0.12.7",
+    "should": "^5.2.0"
   },
   "dependencies": {
     "async": "^0.9.0",
-    "joi": "^4.6.2",
-    "underscore": "^1.6.0"
+    "joi": "^6.1.0",
+    "underscore": "^1.8.3"
   }
 }

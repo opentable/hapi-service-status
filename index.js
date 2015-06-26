@@ -16,8 +16,8 @@ var validateOptions = function(options){
 };
 
 var statusCode = function(status){
-  if(config.return500OnFailure && status == 'Failed'){
-    return 500;
+  if(status == 'Failed'){
+    return config.failureStatusCode;
   }
   return 200;
 }

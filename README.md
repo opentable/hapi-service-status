@@ -18,6 +18,7 @@ server.pack.register(
   {
       plugin: require("hapi-service-status"),
       options: {
+        failureStatusCode: 500,         // status code of the service-status response when monitor fails, default value is 200
         monitors: [
           {
             monitorname: 'mymonitor1',

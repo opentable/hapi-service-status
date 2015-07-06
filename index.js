@@ -15,6 +15,13 @@ var validateOptions = function(options){
   return result.value;
 };
 
+var statusCode = function(status){
+  if(status === 'Failed'){
+    return config.failureStatusCode;
+  }
+  return 200;
+}
+
 exports.register = function(plugin, options, next){
     plugin.log(["service-status"], "validating monitors");
     config = validateOptions(options);
@@ -27,7 +34,7 @@ exports.register = function(plugin, options, next){
                 config: {
                     handler: function(request, reply) {
                         service.run(request.server, config.monitors[config.default || 0], function(result){
-                            reply([result]);
+                            reply([result]).code(statusCode(result.status));
                         });
                     },
                     tags: ['service-status', 'non-cacheable'],
@@ -40,16 +47,22 @@ exports.register = function(plugin, options, next){
                 config: {
                     handler: function(request, reply) {
                         var results = [];
+                        var status = "Ok";
 
                         var sendRequest = function(item, done){
                             service.run(request.server, item, function(result){
                                 results.push(result);
+
+                                if(result.status != "Ok"){
+                                  status = result.status;
+                                }
+
                                 done();
                             });
                         };
 
                         async.forEach(config.monitors, sendRequest, function(){
-                            reply(results);
+                            reply(results).code(statusCode(status));
                         });
                     },
                     tags: ['service-status', 'non-cacheable'],
@@ -70,7 +83,7 @@ exports.register = function(plugin, options, next){
                         }
 
                         service.run(request.server, monitor, function(result){
-                            reply(result).code(200);
+                            reply(result).code(statusCode(result.status));
                         });
                     },
                     tags: ['service-status', 'non-cacheable'],
